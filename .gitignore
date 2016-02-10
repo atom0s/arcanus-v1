@@ -30,3 +30,6 @@ bower_components
 
 # LESS Generated CSS Files
 *.css
+
+# arcanus Plugins
+arcanus/[Pp]lugins
