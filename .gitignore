@@ -31,8 +31,7 @@ bower_components
 # LESS Generated CSS Files
 *.css
 
-# arcanus Root Configuration
+# arcanus Specific Blocks
 arcanus/config.js
-
-# arcanus Plugins
-arcanus/[Pp]lugins
+arcanus/[Pp]lugins/
+arcanus/[Ll]ogs/
