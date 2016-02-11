@@ -14,40 +14,6 @@
 var fs = require('fs');
 var path = require('path');
 
-/*
- <Todo>
-
- Menus should be able to style themselves.
- - Add menu.class           - Allows the menu item to set its own classes.
- - Add menu.directives      - Allows the menu item to set additional directives. (Useful for things like angular.)
- - Add menu.style           - Allows the menu item to set its own styles.
-
- Menu icons should be able style themselves.
- - Add menu.iconclass       - Allows the menu item to set its own class.
- - Add menu.iconstyle       - Allows the menu item to set its own styles.
- - Perhaps add menu.icondirectives too?
-
- Allowing the above should make menus more dynamic and even allow more useful overrides to create not just Bootstrap
- based menu navigation, but also lists that can be maintained by the navigation manager.
-
- If a menu.class is given, it would be used over the internal set classes. Similar for the other properties as well.
-
- This would allow the user to determine how the menu is styled out and how it looks when used.
-
- By default, if no class/styles are given, the navigation service will treat the menu like a Bootstrap navigation menu
- and build it out as one.
-
- </Todo>
- */
-
-// Todo: Menus should be able to style themselves.
-// Todo: Add menu.class to set the menu items class.
-// Todo: Add menu.style to set the menu items style.
-// Todo: Add menu.directives to set the menu items directives.
-// Todo: Menu icons are currently static to specific widths and alignment,
-// Todo: allow menus to set icon styles manually in some form.
-// Todo:        - Perhaps add menu.iconclass and menu.iconstyle
-
 /**
  * Navigation Service
  *
@@ -305,6 +271,112 @@ module.exports = function NavigationServiceModule(arcanus) {
     }
 
     /**
+     * Compiles a menu base link.
+     *
+     * @private
+     * @static
+     * @param {object} menu                         The menu to be compiled.
+     * @returns {string}                            The formatted link.
+     */
+    function compileLink(menu) {
+        var menuC = menu.class || null;
+        var menuD = menu.directives || null;
+        var menuS = menu.style || null;
+
+        var m = arcanus.utils.format(`<li%s%s%s><a href="${menu.href}">`,
+            (menuC === null) ? '' : ` class="${menuC}"`,
+            (menuS === null) ? '' : ` style="${menuS}"`,
+            (menuD === null) ? '' : ` ${menuD}`);
+
+        if (arcanus.utils.isNonEmptyString(menu.icon)) {
+            m += `<i class="fa ${menu.icon}" style="width: 24px; text-align: center;"></i> `;
+        }
+
+        m += `${menu.title}</a></li>`;
+
+        return m;
+    }
+
+    /**
+     * Compiles a menu separator.
+     *
+     * @private
+     * @static
+     * @param {object} menu                         The menu to be compiled.
+     * @returns {string}                            The formatted separator.
+     */
+    function compileSeparator(menu) {
+        var menuC = menu.class || null;
+        var menuD = menu.directives || null;
+        var menuS = menu.style || null;
+
+        return arcanus.utils.format('<li class="%s" role="separator"%s%s></li>',
+            (menuC === null) ? 'divider' : menuC,
+            (menuS === null) ? '' : ` style="${menuS}"`,
+            (menuD === null) ? '' : ` ${menuD}`);
+    }
+
+    /**
+     * Compiles a dropdown menu.
+     *
+     * @private
+     * @static
+     * @param {object} menu                         The menu to be compiled.
+     * @param {number} depth                        The current depth being processed.
+     * @param {object} compiled                     The output to hold the compiled menu data.
+     */
+    function compileDropdownMenu(menu, depth, compiled) {
+        var menuC = menu.class || null;
+        var menuD = menu.directives || null;
+        var menuS = menu.style || null;
+
+        var m = arcanus.utils.format(`<li%s%s%s><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">`,
+            (menuC === null) ? ' class="dropdown"' : ` class="${menuC}"`,
+            (menuS === null) ? '' : ` style="${menuS}"`,
+            (menuD === null) ? '' : ` ${menuD}`);
+
+        if (arcanus.utils.isNonEmptyString(menu.icon)) {
+            m += `<i class="fa ${menu.icon}" style="width: 24px; text-align: center;"></i> `;
+        }
+
+        m += `${menu.title} <span class="caret"></span></a><ul class="dropdown-menu">`;
+
+        compiled.push(m);
+        compileMenu(menu.children, depth + 1, compiled);
+        compiled.push('</ul></li>');
+    }
+
+    /**
+     * Compiles a dropdown sub-menu.
+     *
+     * @private
+     * @static
+     * @param {object} menu                         The menu to be compiled.
+     * @param {number} depth                        The current depth being processed.
+     * @param {object} compiled                     The output to hold the compiled menu data.
+     */
+    function compileDropdownSubMenu(menu, depth, compiled) {
+        var menuC = menu.class || null;
+        var menuD = menu.directives || null;
+        var menuS = menu.style || null;
+
+        var m = arcanus.utils.format(`<li%s%s%s><a href="#">`,
+            (menuC === null) ? ' class="dropdown-submenu"' : ` class="${menuC}"`,
+            (menuS === null) ? '' : ` style="${menuS}"`,
+            (menuD === null) ? '' : ` ${menuD}`);
+
+        if (arcanus.utils.isNonEmptyString(menu.icon)) {
+            m += `<i class="fa ${menu.icon}" style="width: 24px; text-align: center;"></i> `;
+        }
+
+        m += `${menu.title}</a><ul class="dropdown-menu">`;
+
+        compiled.push(m);
+        compileMenu(menu.children, depth + 1, compiled);
+        compiled.push('</ul></li>');
+    }
+
+    /**
      * Compiles a menu into html.
      *
      * @private
@@ -314,51 +386,64 @@ module.exports = function NavigationServiceModule(arcanus) {
      * @param {object} compiled                     The output to hold the compiled menu data.
      */
     function compileMenu(menu, depth, compiled) {
+        // If the current object is an array, compile each item..
         if (menu instanceof Array) {
             for (var x = 0; x < menu.length; x++) {
                 compileMenu(menu[x], depth, compiled);
             }
         } else {
-            // If the menu has no children, treat like a normal link..
             if (!menu.children || menu.children.length === 0) {
-                // Handle the menu if its a separator..
                 if (menu.separator && menu.separator === true) {
-                    compiled.push('<li class="divider" role="separator"></li>');
+                    compiled.push(compileSeparator(menu));
                 } else {
-                    compiled.push(`<li><a href="${menu.href}">`);
-                    if (arcanus.utils.isNonEmptyString(menu.icon)) {
-                        compiled.push(`<i class="fa ${menu.icon}" style="width: 24px; text-align: center;"></i> `);
-                    }
-                    compiled.push(`${menu.title}</a></li>`);
+                    compiled.push(compileLink(menu));
                 }
-            }
-            // If the menu has children, treat as a drop-down sub-menu..
-            else if (menu.children && menu.children.length > 0) {
-                // If the menu object is a root object, treat as the main drop-down menu entry..
+            } else if (menu.children && menu.children.length > 0) {
                 if (depth === 0) {
-                    compiled.push('<li class="dropdown">');
-                    compiled.push('<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">');
-                    if (arcanus.utils.isNonEmptyString(menu.icon)) {
-                        compiled.push(`<i class="fa ${menu.icon}" style="width: 24px; text-align: center;"></i> `);
-                    }
-                    compiled.push(`${menu.title} <span class="caret"></span></a>`);
-                    compiled.push('<ul class="dropdown-menu">');
-                    compileMenu(menu.children, depth + 1, compiled);
-                    compiled.push('</ul></li>');
+                    compileDropdownMenu(menu, depth, compiled);
                 } else {
-                    // If the menu object is a child, treat as a sub-menu entry..
-                    compiled.push('<li class="dropdown-submenu">');
-                    compiled.push('<a href="#">');
-                    if (arcanus.utils.isNonEmptyString(menu.icon)) {
-                        compiled.push(`<i class="fa ${menu.icon}" style="width: 24px; text-align: center;"></i> `);
-                    }
-                    compiled.push(`${menu.title}</a>`);
-                    compiled.push('<ul class="dropdown-menu">');
-                    compileMenu(menu.children, depth + 1, compiled);
-                    compiled.push('</li></ul></li>');
+                    compileDropdownSubMenu(menu, depth, compiled);
                 }
             } else {
-                throw new Error('Invalid menu being processed.');
+                throw new Error('Invalid menu being process.');
+            }
+        }
+    }
+
+    /**
+     * Compiles a simple menu rather then a bootstrap navigation based menu.
+     *
+     * @private
+     * @static
+     * @param {object} menu                         The menu to be compiled.
+     * @param {number} depth                        The current depth being processed.
+     * @param {object} compiled                     The output to hold the compiled menu data.
+     */
+    function compileSimpleMenu(menu, depth, compiled) {
+        if (menu instanceof Array) {
+            for (var x = 0; x < menu.length; x++) {
+                compileSimpleMenu(menu[x], depth, compiled);
+            }
+        } else {
+            if (!menu.children || menu.children.length === 0) {
+                if (menu.separator && menu.separator === true) {
+                    compiled.push(compileSeparator(menu));
+                } else {
+                    compiled.push(compileLink(menu));
+                }
+            } else if (menu.children && menu.children.length > 0) {
+                var menuC = menu.class || null;
+                var menuD = menu.directives || null;
+                var menuS = menu.style || null;
+
+                var m = arcanus.utils.format(`<li%s%s%s>${menu.title}<ul>`,
+                    (menuC === null) ? '' : ` class="${menuC}"`,
+                    (menuS === null) ? '' : ` style="${menuS}"`,
+                    (menuD === null) ? '' : ` ${menuD}`);
+
+                compiled.push(m);
+                compileSimpleMenu(menu.children, depth + 1, compiled);
+                compiled.push('</ul></li>');
             }
         }
     }
@@ -395,7 +480,6 @@ module.exports = function NavigationServiceModule(arcanus) {
      * @returns {boolean}                           True on success, false otherwise.
      */
     NavigationService.prototype.createMenu = function (name, menu, options) {
-        // Todo: remove creation options..
         // Prevent creating menus with the same name..
         if (this.getMenuRaw(name))
             return false;
@@ -453,10 +537,23 @@ module.exports = function NavigationServiceModule(arcanus) {
         if (!rawMenu)
             return '';
 
+        var compiled = [];
+
+        // Todo: Add menu creation options to menus..
+        // Todo: -- __menuOptions[name].class
+        // Todo: -- __menuOptions[name].directives
+        // Todo: -- __menuOptions[name].style
+
         // Compile the raw menu..
-        var compiled = [`<ul class="nav navbar-nav navbar-left ${__menuOptions[name.toLowerCase()].class || ''}">`];
-        compileMenu(rawMenu, 0, compiled);
-        compiled.push('</ul>');
+        if (rawMenu[0].simple && rawMenu[0].simple === true) {
+            compiled.push('<ul>');
+            compileSimpleMenu(rawMenu, 0, compiled);
+            compiled.push('</ul>');
+        } else {
+            compiled.push(`<ul class="nav navbar-nav navbar-left ${__menuOptions[name.toLowerCase()].class || ''}">`);
+            compileMenu(rawMenu, 0, compiled);
+            compiled.push('</ul>');
+        }
 
         // Store the new compiled menu..
         __compiledMenus[name.toLowerCase()] = compiled.join('');
