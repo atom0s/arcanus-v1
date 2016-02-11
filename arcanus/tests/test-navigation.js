@@ -335,4 +335,112 @@ describe('NavigationService', function () {
         assert(this.nav.deleteMenuItem('test', 'test') === false);
         done();
     });
+
+    /** **/
+    /** **/
+    /** **/
+
+    it('Should create an extended menu.', function (done) {
+        var menu = [
+            {
+                alias: 'test',
+                href: 'http://www.google.com/',
+                icon: 'fa-user',
+                title: 'Test',
+                style: 'border: 1px solid #000; color: red;',
+                simple: true,
+                children: [
+                    {
+                        alias: 'test2',
+                        href: 'http://www.google.com/',
+                        icon: 'fa-user',
+                        title: 'Test 2',
+                        children: [
+                            {
+                                alias: 'test10',
+                                href: 'http://www.google.com',
+                                icon: 'fa-user',
+                                title: 'Test 10'
+                            },
+                            {
+                                alias: 'test11',
+                                href: 'http://www.google.com',
+                                icon: 'fa-user',
+                                title: 'Test 11'
+                            },
+                            {
+                                alias: 'test12',
+                                href: 'http://www.google.com',
+                                icon: 'fa-user',
+                                title: 'Test 12'
+                            }
+                        ]
+                    },
+                    {
+                        alias: 'test3',
+                        separator: true,
+                        class: 'menu-child menu-test3',
+                        style: 'border: 1px solid #000; color: red;',
+                        directives: 'ng-cloak'
+                    },
+                    {
+                        alias: 'test4',
+                        href: 'http://www.google.com/',
+                        icon: 'fa-user',
+                        title: 'Test 4',
+                        children: []
+                    },
+                    {
+                        alias: 'test5',
+                        separator: true
+                    },
+                    {
+                        alias: 'test6',
+                        href: 'http://www.google.com/',
+                        icon: 'fa-user',
+                        title: 'Test 6',
+                        children: []
+                    },
+                    {
+                        alias: 'test7',
+                        href: 'http://www.google.com/',
+                        icon: 'fa-user',
+                        title: 'Test 7',
+                        children: []
+                    },
+                    {
+                        alias: 'test8',
+                        href: 'http://www.google.com/',
+                        icon: 'fa-user',
+                        title: 'Test 8',
+                        children: []
+                    }
+                ]
+            },
+            {
+                alias: 'derp',
+                href: 'http://atom0s.com/',
+                icon: '',
+                title: 'Derp',
+                children: []
+            },
+            {
+                alias: 'derp2',
+                href: 'http://atom0s.com/',
+                icon: 'fa-users',
+                title: 'Derp 2',
+                children: []
+            },
+            {
+                alias: 'derp3',
+                href: 'http://atom0s.com/',
+                icon: '',
+                title: 'Derp 3',
+                children: []
+            }
+        ];
+
+        assert(this.nav.createMenu('extended', menu) === true);
+        done();
+    });
 });
