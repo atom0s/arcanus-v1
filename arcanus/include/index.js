@@ -48,9 +48,11 @@ module.exports = function (config) {
 
     // Register internal services to arcanus..
     var ViewService = require(path.join(config.root_path, '/include/services/ViewService'))(arcanus);
+    var NavigationService = require(path.join(config.root_path, '/include/services/NavigationService'))(arcanus);
     var PluginService = require(path.join(config.root_path, '/include/services/PluginService'))(arcanus);
 
     arcanus.services.registerService(ViewService);
+    arcanus.services.registerService(NavigationService);
     arcanus.services.registerService(PluginService);
 
     // Return the initialized arcanus application..

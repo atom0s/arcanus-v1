@@ -24,7 +24,7 @@ module.exports = function ServiceFactoryModule(arcanus) {
      *
      * @type {Array}
      */
-    var LOADED_SERVICES = [];
+    var LOADED_SERVICES = {};
 
     /**
      * Implements the service factory.

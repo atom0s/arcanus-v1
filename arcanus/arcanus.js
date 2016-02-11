@@ -462,11 +462,25 @@ function Arcanus(config) {
             });
         });
     };
+
+    /**
+     * Returns the base arcanus object.
+     *
+     * @returns {object}                            Returns the base arcanus object.
+     */
+    this.get = function () {
+        return arcanus;
+    };
 }
 
-// Load the configuration and create the arcanus application..
-var config = require('./include/config.js').load();
-var arcanus = new Arcanus(config);
+// Export arcanus if this was loaded as a child script..
+if (module.parent) {
+    module.exports = Arcanus;
+} else {
+    // Load the configuration file..
+    var config = require('./include/config.js').load();
+    var arcanus = new Arcanus(config);
 
-// Start the application..
-arcanus.start();
+    // Start the application..
+    arcanus.start();
+}
