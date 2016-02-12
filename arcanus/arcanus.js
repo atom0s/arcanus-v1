@@ -128,7 +128,6 @@ vash.helpers.toJson = function (arg) {
  * Prepares the framework for usage.
  * Start the server to listen for incoming requests.
  *
- * @param {object} config                           The current loaded configuration file to use with arcanus.
  * @constructor
  */
 function Arcanus() {
