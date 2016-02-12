@@ -88,7 +88,7 @@ var DEFAULT_ARCANUS_CONFIG = {
         name: 'arcanus',
         path: 'http://localhost/',
         meta: {
-            description: 'A Node.js website framework that is extendable through plugins.',
+            description: 'A Node.js website framework that is extensible through plugins.',
             keywords: 'arcanus, node, nodejs, plugins, framework'
         },
         cookieSecret: 'DefaultArcanusCookieSecret'

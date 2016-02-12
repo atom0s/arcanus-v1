@@ -1,7 +1,7 @@
 {
   "name": "arcanus",
   "version": "1.0.0",
-  "description": "A Node.js website framework that is extendable through plugins.",
+  "description": "A Node.js website framework that is extensible through plugins.",
   "author": "atom0s <atom0s@live.com>",
   "contributors": [
     {

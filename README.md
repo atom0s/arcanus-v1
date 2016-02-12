@@ -1,6 +1,6 @@
 ## arcanus
 
-A Node.js website framework that is extendable through plugins.
+A Node.js website framework that is extensible through plugins.
 
 ## Requirements
 

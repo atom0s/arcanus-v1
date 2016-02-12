@@ -1,6 +1,6 @@
 {
   "name": "arcanus",
-  "description": "A Node.js website framework that is extendable through plugins.",
+  "description": "A Node.js website framework that is extensible through plugins.",
   "main": "arcanus.js",
   "authors": [
     "atom0s <atom0s@live.com>"
