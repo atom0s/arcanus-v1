@@ -27,6 +27,8 @@ module.exports = function LoggerModule(arcanus) {
      * @constructor
      */
     function Logger() {
+        var self = this;
+
         // Obtain the debug output level to use..
         var debugLevel = process.env.DEBUG_LEVEL || 'debug';
 
@@ -56,7 +58,7 @@ module.exports = function LoggerModule(arcanus) {
         // Implement log streaming for request logging..
         this.logger.stream = {
             write: function (msg) {
-                this.logger.info(msg.trim());
+                self.logger.info(msg.trim());
             }
         };
     }

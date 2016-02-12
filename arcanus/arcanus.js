@@ -27,6 +27,9 @@ var passport = require('passport');
 var session = require('express-session');
 var vash = require('vash');
 
+// Obtain the current arcanus version from the package.json..
+var arcanusVersion = require('./package.json').version;
+
 /**
  * Normalizes a path preparing it view rendering within vash.
  *
@@ -280,7 +283,11 @@ function Arcanus() {
             res.model.successMessage = req.flash('success') || null;
             res.model.warningMessage = req.flash('warning') || null;
 
-            // Todo: Add navigation menus to model..
+            // Add navigation service features to the res model..
+            res.model.navigation = {};
+            res.model.navigation.get = function (name) {
+                return arcanus.services.get('navigationservice').getMenu(name);
+            };
 
             // Continue the request chain..
             next();
