@@ -452,9 +452,9 @@ module.exports = function PluginServiceModule(arcanus) {
 
             // Register the middleware paths for this plugin..
             var pluginMiddlewareName = 'plugin_' + pluginJson.uid + '_middleware';
-            arcanus.app.use('/public', arcanus.utils.namedFunction(pluginMiddlewareName, require('less-middleware')(path.join(PLUGIN_DIRECTORY, pluginJson.uid, 'public'))));
-            arcanus.app.use('/public', arcanus.utils.namedFunction(pluginMiddlewareName, express.static(path.join(PLUGIN_DIRECTORY, pluginJson.uid, 'public'))));
-            arcanus.app.use('/public', arcanus.utils.namedFunction(pluginMiddlewareName, express.static(path.join(PLUGIN_DIRECTORY, pluginJson.uid, 'bower_components'))));
+            arcanus.app.use('/public', arcanus.utils.namedFunction(arcanus.utils.toSafePluginName(pluginMiddlewareName), require('less-middleware')(path.join(PLUGIN_DIRECTORY, pluginJson.uid, 'public'))));
+            arcanus.app.use('/public', arcanus.utils.namedFunction(arcanus.utils.toSafePluginName(pluginMiddlewareName), express.static(path.join(PLUGIN_DIRECTORY, pluginJson.uid, 'public'))));
+            arcanus.app.use('/public', arcanus.utils.namedFunction(arcanus.utils.toSafePluginName(pluginMiddlewareName), express.static(path.join(PLUGIN_DIRECTORY, pluginJson.uid, 'bower_components'))));
 
             return callback();
         });
@@ -511,7 +511,7 @@ module.exports = function PluginServiceModule(arcanus) {
 
         // Remove the plugins middleware paths..
         var pluginMiddlewareName = 'plugin_' + uid.toLocaleLowerCase() + '_middleware';
-        _.remove(arcanus.app._router.stack, function (s) { return s.name == pluginMiddlewareName; });
+        _.remove(arcanus.app._router.stack, function (s) { return s.name == arcanus.utils.toSafePluginName(pluginMiddlewareName); });
 
         // Todo: Figure out how to remove the plugins routers from the stack..
         //

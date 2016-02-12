@@ -247,6 +247,17 @@ Util.mkdirSync = function (dir, isFileName) {
 };
 
 /**
+ * Converts the given name to a safe plugin name.
+ *
+ * @param {string} name                             The name to convert to a safe name.
+ * @returns {string}                                The safe name.
+ */
+Util.toSafePluginName = function (name) {
+    name = name.replace(/[:\-\s\.]/gi, '_');
+    return name;
+};
+
+/**
  * Merges the Node.js utilities with ours.
  */
 Util.merge(util, Util);

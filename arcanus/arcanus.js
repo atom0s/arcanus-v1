@@ -307,10 +307,7 @@ function Arcanus(config) {
 
         // Load the enabled plugins..
         pluginService.loadPlugins(function (err, result) {
-            //return callback(err);
-            pluginService.unloadPlugin("test", function (err, done) {
-                return callback(err);
-            });
+            return callback(err);
         });
     };
 
