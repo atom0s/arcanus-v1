@@ -149,21 +149,6 @@ module.exports = function PluginServiceModule(arcanus) {
         plugins.forEach(function (dir) {
             tasks.push(function (callback) {
                 self.loadPlugin(dir, function (err, result) {
-                    // Check if the plugin failed to load..
-                    if (err) {
-                        arcanus.log.error('PluginService: Failed to load plugin: %s', dir);
-                        arcanus.log.error('  -> %s', err);
-
-                        // Check for validation errors..
-                        if (err.validationErrors) {
-                            err.validationErrors.forEach(function (e) {
-                                arcanus.log.error('  -> %s', e);
-                            });
-                        }
-                    } else if (!err && result != true) {
-                        arcanus.log.error('PluginService: Failed to load plugin: %s', dir);
-                    }
-
                     return arcanus.config.plugins.failOnLoad
                         ? callback(err)
                         : callback();
@@ -175,7 +160,8 @@ module.exports = function PluginServiceModule(arcanus) {
         async.series(tasks, function (err) {
             // Kill the process if configured to error on load..
             if (err && arcanus.config.plugins.failOnLoad) {
-                arcanus.log.error(err);
+                arcanus.log.error(err.message);
+                arcanus.log.error(err.stack);
                 process.exit(1);
             }
 
@@ -481,7 +467,7 @@ module.exports = function PluginServiceModule(arcanus) {
                 return done(new Error('Failed to load plugin. Please check the logs for more information.'));
             }
 
-            arcanus.log.info('PluginService: Loaded plugin: %s', dir);
+            arcanus.log.info('PluginService: Loaded plugin: %s [v%s by %s (%s)]', pluginJson.uid, pluginJson.version, pluginJson.author.name, pluginJson.author.website);
             return done(null, true);
         });
     };

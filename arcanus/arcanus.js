@@ -456,8 +456,11 @@ function Arcanus() {
                 throw err;
 
             arcanus.server.listen(arcanus.app.get('port'), function () {
-                arcanus.log.info('Initialization complete! arcanus is live and awaiting requests!');
+                arcanus.log.info('-------------------------------------------------------------------------');
+                arcanus.log.info('Initialization complete!');
+                arcanus.log.info('-------------------------------------------------------------------------');
                 arcanus.log.info(`arcanus is listening on: ${arcanus.app.get('port')}`);
+                arcanus.log.info('-------------------------------------------------------------------------');
             });
         });
     };
