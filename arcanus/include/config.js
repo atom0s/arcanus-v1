@@ -174,7 +174,6 @@ module.exports = function ConfigurationModule(arcanus) {
         return this.config;
     };
 
-// Return the configuration module..
+    // Return the configuration module..
     return Configuration;
-}
-;
+};
