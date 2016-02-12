@@ -174,6 +174,8 @@ function Arcanus(config) {
         arcanus.app.use(session({
             secret: arcanus.config.site.cookieSecret, resave: true, saveUninitialized: true
         }));
+        arcanus.app.use(bodyParser.urlencoded({ extended: true }));
+        arcanus.app.use(bodyParser.json());
 
         // Initialize the content middleware..
         arcanus.app.use('/public', require('less-middleware')(path.join(__dirname, 'public')));

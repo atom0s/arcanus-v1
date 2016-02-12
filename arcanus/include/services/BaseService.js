@@ -9,6 +9,8 @@
  * is forbidden except by express written permission of atom0s.
  */
 
+"use strict";
+
 /**
  * Implements the base service class that all services must inherit.
  *

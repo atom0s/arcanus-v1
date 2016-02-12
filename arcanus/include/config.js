@@ -158,6 +158,11 @@ Configuration.load = function (f) {
         }
     }
 
+    // Log that no configuration file was found..
+    if (config === null) {
+        console.log('Configuration: Warning! No configuration file was found.');
+    }
+
     // Merge the configurations with the defaults..
     return Configuration.mergeWithDefaults(config);
 };

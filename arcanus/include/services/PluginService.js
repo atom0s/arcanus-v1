@@ -9,6 +9,8 @@
  * is forbidden except by express written permission of atom0s.
  */
 
+"use strict";
+
 var fs = require('fs');
 var path = require('path');
 var _ = require('lodash');

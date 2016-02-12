@@ -9,6 +9,8 @@
  * is forbidden except by express written permission of atom0s.
  */
 
+"use strict";
+
 var mysql = require('mysql');
 
 module.exports = function (arcanus) {
