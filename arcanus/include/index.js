@@ -15,10 +15,8 @@ var path = require('path');
 
 /**
  * Prepares the arcanus framework for usage.
- *
- * @param {object} config                       The loaded arcanus configuration object.
  */
-module.exports = function (config) {
+module.exports = function () {
     /**
      * The base arcanus object to hold the various framework elements.
      *
@@ -27,33 +25,41 @@ module.exports = function (config) {
      */
     var arcanus = {};
 
-    // Store the loaded configurations..
-    arcanus.config = config;
-
     // Prepare the arcanus utils class object..
-    arcanus.utils = require(path.join(config.root_path, '/include/utils'));
+    arcanus.utils = require(path.join(__dirname, 'utils'));
 
     // Prepare the arcanus logging instance..
-    arcanus.log = require(path.join(config.root_path, '/include/logging'))(arcanus);
+    arcanus.Logger = require(path.join(__dirname, 'logging'))(arcanus);
+    arcanus.log = new arcanus.Logger().get();
+
+    // Display the arcanus header..
+    var arcanusVersion = require('../package.json').version;
+    arcanus.log.info('-------------------------------------------------------------------------');
+    arcanus.log.info(`arcanus v${arcanusVersion} (c) 2015-2016 atom0s [atom0s@live.com]`);
+    arcanus.log.info('-------------------------------------------------------------------------');
+
+    // Store the loaded configurations..
+    arcanus.Configuration = require(path.join(__dirname, 'config'))(arcanus);
+    arcanus.config = new arcanus.Configuration().get();
 
     // Prepare the arcanus caching object..
     arcanus.Cache = require('node-cache');
     arcanus.cache = new arcanus.Cache({ stdTTL: 0, checkperiod: 300 });
 
     // Prepare the arcanus service factory..
-    arcanus.services = new (require(path.join(config.root_path, '/include/services/ServiceFactory'))(arcanus));
+    arcanus.services = new (require(path.join(__dirname, 'services/ServiceFactory'))(arcanus));
 
     // Prepare the base service for services to inherit from..
-    arcanus.BaseService = require(path.join(config.root_path, '/include/services/BaseService'));
+    arcanus.BaseService = require(path.join(__dirname, 'services/BaseService'));
 
     // Register internal services to arcanus..
-    var ViewService = require(path.join(config.root_path, '/include/services/ViewService'))(arcanus);
-    var NavigationService = require(path.join(config.root_path, '/include/services/NavigationService'))(arcanus);
-    var PluginService = require(path.join(config.root_path, '/include/services/PluginService'))(arcanus);
+    var NavigationService = require(path.join(__dirname, 'services/NavigationService'))(arcanus);
+    var PluginService = require(path.join(__dirname, 'services/PluginService'))(arcanus);
+    var ViewService = require(path.join(__dirname, 'services/ViewService'))(arcanus);
 
-    arcanus.services.registerService(ViewService);
     arcanus.services.registerService(NavigationService);
     arcanus.services.registerService(PluginService);
+    arcanus.services.registerService(ViewService);
 
     // Return the initialized arcanus application..
     return arcanus;

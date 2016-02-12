@@ -20,48 +20,56 @@ var winston = require('winston');
  *
  * @param {object} arcanus                          The arcanus application instance.
  */
-module.exports = function Logger(arcanus) {
-    // Ensure the logging configurations exist..
-    if (!utils.isObject(arcanus.config.logging))
-        arcanus.config.logging = {};
+module.exports = function LoggerModule(arcanus) {
+    /**
+     * Logger class constructor.
+     *
+     * @constructor
+     */
+    function Logger() {
+        // Obtain the debug output level to use..
+        var debugLevel = process.env.DEBUG_LEVEL || 'debug';
 
-    // Ensure the logging level is a string..
-    if (!utils.isString(arcanus.config.logging.level))
-        arcanus.config.logging.level = 'debug';
+        // Setup the default winston transports..
+        this.transports = [
+            new (winston.transports.Console)({ colorize: true, level: debugLevel, timestamp: false, label: '' })
+        ];
 
-    // Set the default winston transports..
-    arcanus.config.logging.transports = [
-        new (winston.transports.Console)({ level: arcanus.config.logging.level, timestamp: true, label: '!' })
-    ];
+        // Setup the path to the arcanus log file..
+        arcanus.utils.mkdirSync(path.join(__dirname, '..', 'log', 'arcanus.log'), true);
 
-    // Create a file transport if the configuration has a log file set..
-    if (utils.isNonEmptyString(arcanus.config.logging.file)) {
-        // Ensure the path to the log file exists..
-        utils.mkdirSync(path.join(arcanus.config.logging.path, arcanus.config.logging.file), true);
-
-        // Create the file transport..
+        // Setup the file transport to log to disk..
         var fileTransport = new (winston.transports.File)({
-            filename: path.join(arcanus.config.logging.path, arcanus.config.logging.file),
-            level: arcanus.config.logging.level,
+            filename: path.join(__dirname, '..', 'log', 'arcanus.log'),
+            level: debugLevel,
             timestamp: true
         });
-        arcanus.config.logging.transports.push(fileTransport);
+        this.transports.push(fileTransport);
+
+        // Initialize winston..
+        this.logger = new (winston.Logger)({
+            transports: this.transports,
+            level: debugLevel,
+            padLevels: true
+        });
+
+        // Implement log streaming for request logging..
+        this.logger.stream = {
+            write: function (msg) {
+                this.logger.info(msg.trim());
+            }
+        };
     }
 
-    // Initialize winston..
-    var logger = new (winston.Logger)({
-        transports: arcanus.config.logging.transports,
-        level: arcanus.config.logging.level,
-        padLevels: true
-    });
-
-    // Implement log streaming..
-    logger.stream = {
-        write: function (msg) {
-            logger.info(msg.trim());
-        }
+    /**
+     * Returns the underlying logger object.
+     *
+     * @returns {object}                            The winston logger object.
+     */
+    Logger.prototype.get = function () {
+        return this.logger;
     };
 
-    // Return the configured logging object..
-    return logger;
+    // Return the logger module..
+    return Logger;
 };

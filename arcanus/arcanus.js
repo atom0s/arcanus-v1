@@ -27,9 +27,6 @@ var passport = require('passport');
 var session = require('express-session');
 var vash = require('vash');
 
-// Obtain the current arcanus version..
-var arcanusVersion = require('./package.json').version;
-
 /**
  * Normalizes a path preparing it view rendering within vash.
  *
@@ -131,17 +128,13 @@ vash.helpers.toJson = function (arg) {
  * @param {object} config                           The current loaded configuration file to use with arcanus.
  * @constructor
  */
-function Arcanus(config) {
-    console.log('-------------------------------------------------------------------------');
-    console.log(`arcanus v${arcanusVersion} (c) 2015-2016 atom0s [atom0s@live.com]`);
-    console.log('-------------------------------------------------------------------------');
-
+function Arcanus() {
     /**
      * The internal base arcanus object.
      *
      * @type {object}
      */
-    var arcanus = require('./include')(config);
+    var arcanus = require('./include')();
 
     /**
      * Initializes Express.js and prepares it for usage.
@@ -476,10 +469,7 @@ function Arcanus(config) {
 if (module.parent) {
     module.exports = Arcanus;
 } else {
-    // Load the configuration file..
-    var config = require('./include/config.js').load();
-    var arcanus = new Arcanus(config);
-
     // Start the application..
+    var arcanus = new Arcanus();
     arcanus.start();
 }
