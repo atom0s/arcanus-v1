@@ -546,7 +546,7 @@ module.exports = function NavigationServiceModule(arcanus) {
             (menuS === null) ? '' : ` style="${menuS}"`,
             (menuD === null) ? '' : ` ${menuD}`);
 
-        var compiled = ['<ul>'];
+        var compiled = [m];
 
         // Compile the raw menu..
         if (rawMenu[0].simple && rawMenu[0].simple === true) {
