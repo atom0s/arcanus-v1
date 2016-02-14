@@ -537,23 +537,25 @@ module.exports = function NavigationServiceModule(arcanus) {
         if (!rawMenu)
             return '';
 
-        var compiled = [];
+        var menuC = __menuOptions[name.toLowerCase()].class || null;
+        var menuD = __menuOptions[name.toLowerCase()].directives || null;
+        var menuS = __menuOptions[name.toLowerCase()].style || null;
 
-        // Todo: Add menu creation options to menus..
-        // Todo: -- __menuOptions[name].class
-        // Todo: -- __menuOptions[name].directives
-        // Todo: -- __menuOptions[name].style
+        var m = arcanus.utils.format(`<ul%s%s%s>${menu.title}<ul>`,
+            (menuC === null) ? '' : ` class="${menuC}"`,
+            (menuS === null) ? '' : ` style="${menuS}"`,
+            (menuD === null) ? '' : ` ${menuD}`);
+
+        var compiled = ['<ul>'];
 
         // Compile the raw menu..
         if (rawMenu[0].simple && rawMenu[0].simple === true) {
-            compiled.push('<ul>');
             compileSimpleMenu(rawMenu, 0, compiled);
-            compiled.push('</ul>');
         } else {
-            compiled.push(`<ul class="nav navbar-nav navbar-left ${__menuOptions[name.toLowerCase()].class || ''}">`);
             compileMenu(rawMenu, 0, compiled);
-            compiled.push('</ul>');
         }
+
+        compiled.push('</ul>');
 
         // Store the new compiled menu..
         __compiledMenus[name.toLowerCase()] = compiled.join('');
