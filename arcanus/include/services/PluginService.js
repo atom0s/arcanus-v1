@@ -498,15 +498,12 @@ module.exports = function PluginServiceModule(arcanus) {
         arcanus.app.set('views', views);
 
         // Remove the plugins middleware paths..
-        var pluginMiddlewareName = 'plugin_' + uid.toLocaleLowerCase() + '_middleware';
+        var pluginMiddlewareName = 'plugin_' + uid.toLowerCase() + '_middleware';
         _.remove(arcanus.app._router.stack, function (s) { return s.name == arcanus.utils.toSafePluginName(pluginMiddlewareName); });
 
-        // Todo: Figure out how to remove the plugins routers from the stack..
-        //
-        // An idea where would be to have plugins define their routes inside of the plugin.json
-        // file and have arcanus manually create the router internally. This would allow arcanus
-        // to define a name with the router and be able to remove it when the plugin unloads.
-        //
+        // Remove the plugins router paths..
+        var pluginRouterName = 'plugin_' + uid.toLowerCase() + '_router';
+        _.remove(arcanus.app._router.stack, function (s) { return s.name == arcanus.utils.toSafePluginName(pluginRouterName); });
 
         arcanus.log.info('PluginService: Unloaded plugin: %s', uid);
         return done(null, true);
@@ -625,6 +622,17 @@ module.exports = function PluginServiceModule(arcanus) {
     PluginService.require = function (uid, module) {
         var modulePath = path.join(PLUGIN_DIRECTORY, uid, 'node_modules', module);
         return require(modulePath);
+    };
+
+    /**
+     * Registers an express router to the arcanus express router stack.
+     *
+     * @param {string} uid                          The unique plugin identifier.
+     * @param {function} router                     The express router to register.
+     */
+    PluginService.prototype.registerRouter = function (uid, router) {
+        var pluginRouterName = 'plugin_' + uid.toLocaleLowerCase() + '_router';
+        arcanus.app.use(arcanus.utils.namedFunction(pluginRouterName, router));
     };
 
     // Return the plugin service..
