@@ -628,11 +628,18 @@ module.exports = function PluginServiceModule(arcanus) {
      * Registers an express router to the arcanus express router stack.
      *
      * @param {string} uid                          The unique plugin identifier.
+     * @param {function|string=} p                  The path to register the route under.
      * @param {function} router                     The express router to register.
      */
-    PluginService.prototype.registerRouter = function (uid, router) {
-        var pluginRouterName = 'plugin_' + uid.toLocaleLowerCase() + '_router';
-        arcanus.app.use(arcanus.utils.namedFunction(pluginRouterName, router));
+    PluginService.prototype.registerRouter = function (uid, p, router) {
+        var pluginRouterName = 'plugin_' + uid.toLowerCase() + '_router';
+
+        // No path was given..
+        if (!router) {
+            arcanus.app.use(arcanus.utils.namedFunction(arcanus.utils.toSafePluginName(pluginRouterName), p));
+        } else {
+            arcanus.app.use(p, arcanus.utils.namedFunction(arcanus.utils.toSafePluginName(pluginRouterName), router));
+        }
     };
 
     // Return the plugin service..
