@@ -282,10 +282,10 @@ function Arcanus() {
             res.model.successMessage = req.flash('success') || null;
             res.model.warningMessage = req.flash('warning') || null;
 
-            // Add navigation service features to the res model..
-            res.model.navigation = {};
-            res.model.navigation.get = function (name) {
-                return arcanus.services.get('navigationservice').getMenu(name);
+            // Add menu service features to the res model..
+            res.model.menu = {};
+            res.model.menu.get = function (name) {
+                return arcanus.services.get('menuservice').getMenu(name);
             };
 
             // Continue the request chain..

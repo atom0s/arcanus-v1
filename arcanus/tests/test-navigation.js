@@ -14,7 +14,7 @@
 var assert = require('assert');
 var Arcanus = require('../arcanus');
 
-describe('NavigationService', function () {
+describe('MenuService Tests', function () {
     /**
      * Example menu to be used in tests.
      *
@@ -69,9 +69,8 @@ describe('NavigationService', function () {
      * @param {function} done                       Callback function to invoke when completed.
      */
     before(function (done) {
-        var config = require('../include/config.js').load();
-        this.arcanus = new Arcanus(config);
-        this.nav = this.arcanus.get().services.get('navigationservice');
+        this.arcanus = new Arcanus();
+        this.nav = this.arcanus.get().services.get('menuservice');
         done();
     });
 
@@ -80,7 +79,7 @@ describe('NavigationService', function () {
     /**                     **/
 
     it('Should validate a menu.', function (done) {
-        assert.ok(this.nav.isMenuValid(exampleMenu), 'Failed to validate menu.');
+        assert.ok(this.nav.validate(exampleMenu), 'Failed to validate menu.');
         done();
     });
 
@@ -93,7 +92,7 @@ describe('NavigationService', function () {
             children: []
         };
 
-        assert.ok(this.nav.isMenuValid(menu), 'Failed to validate menu.');
+        assert.ok(this.nav.validate(menu), 'Failed to validate menu.');
         done();
     });
 
@@ -105,7 +104,7 @@ describe('NavigationService', function () {
             }
         ];
 
-        assert.ok(this.nav.isMenuValid(menu), 'Failed to validate menu.');
+        assert.ok(this.nav.validate(menu), 'Failed to validate menu.');
         done();
     });
 
@@ -120,7 +119,7 @@ describe('NavigationService', function () {
             }
         ];
 
-        assert(this.nav.isMenuValid(menu) == false);
+        assert(this.nav.validate(menu) == false);
         done();
     });
 
@@ -135,7 +134,7 @@ describe('NavigationService', function () {
             }
         ];
 
-        assert(this.nav.isMenuValid(menu) == false);
+        assert(this.nav.validate(menu) == false);
         done();
     });
 
@@ -148,7 +147,7 @@ describe('NavigationService', function () {
             }
         ];
 
-        assert(this.nav.isMenuValid(menu) == false);
+        assert(this.nav.validate(menu) == false);
         done();
     });
 
@@ -161,7 +160,7 @@ describe('NavigationService', function () {
             }
         ];
 
-        assert(this.nav.isMenuValid(menu) == false);
+        assert(this.nav.validate(menu) == false);
         done();
     });
 
@@ -344,15 +343,12 @@ describe('NavigationService', function () {
         var menu = [
             {
                 alias: 'test',
-                href: 'http://www.google.com/',
                 icon: 'fa-user',
                 title: 'Test',
                 style: 'border: 1px solid #000; color: red;',
-                simple: true,
                 children: [
                     {
                         alias: 'test2',
-                        href: 'http://www.google.com/',
                         icon: 'fa-user',
                         title: 'Test 2',
                         children: [

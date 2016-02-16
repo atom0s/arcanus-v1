@@ -53,11 +53,11 @@ module.exports = function () {
     arcanus.BaseService = require(path.join(__dirname, 'services/BaseService'));
 
     // Register internal services to arcanus..
-    var NavigationService = require(path.join(__dirname, 'services/NavigationService'))(arcanus);
+    var MenuService = require(path.join(__dirname, 'services/MenuService'))(arcanus);
     var PluginService = require(path.join(__dirname, 'services/PluginService'))(arcanus);
     var ViewService = require(path.join(__dirname, 'services/ViewService'))(arcanus);
 
-    arcanus.services.registerService(NavigationService);
+    arcanus.services.registerService(MenuService);
     arcanus.services.registerService(PluginService);
     arcanus.services.registerService(ViewService);
 
