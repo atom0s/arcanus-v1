@@ -51,24 +51,29 @@ MenuUtils.isValidMenuItem = function (menu) {
 
         // Determine the type of menu item and run specific validations for it..
         function (m) {
+            var isDebug = (process.env.NODE_ENV) ? process.env.NODE_ENV === 'debug' : false;
+
             // Ensure children is an array if it exists..
             if (Object(m).hasOwnProperty('children') && !(m.children instanceof Array))
                 return false;
 
             // Is this a separator..
             if (m.separator) {
-                console.log(`Menu Validator - Separator - ${m.alias}`);
+                if (isDebug)
+                    console.log(`Menu Validator - Separator - ${m.alias}`);
                 return MenuUtils.isValidMenuSeparator(m);
             }
 
             // Is this a parent..
             if (!m.href) {
-                console.log(`Menu Validator - Parent    - ${m.alias}`);
+                if (isDebug)
+                    console.log(`Menu Validator - Parent    - ${m.alias}`);
                 return MenuUtils.isValidMenuParent(m);
             }
 
             // Assume it is a menu item link..
-            console.log(`Menu Validator - Link      - ${m.alias}`);
+            if (isDebug)
+                console.log(`Menu Validator - Link      - ${m.alias}`);
             return MenuUtils.isValidMenuLink(m);
         }
     ];
