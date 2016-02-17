@@ -475,7 +475,9 @@ function Arcanus() {
 }
 
 // Export arcanus if this was loaded as a child script..
-if (module.parent) {
+// -- Explicit check for iisnode. interceptor.js will be the main parent when loaded
+//    under IIS using iisnode. This ensures that arcanus will be loaded as a parent.
+if (module.parent && module.parent.filename.indexOf('iisnode') === -1) {
     module.exports = Arcanus;
 } else {
     // Start the application..

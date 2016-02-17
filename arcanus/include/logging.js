@@ -38,11 +38,11 @@ module.exports = function LoggerModule(arcanus) {
         ];
 
         // Setup the path to the arcanus log file..
-        arcanus.utils.mkdirSync(path.join(__dirname, '..', 'log', 'arcanus.log'), true);
+        arcanus.utils.mkdirSync(path.join(__dirname, '..', 'logs', 'arcanus.log'), true);
 
         // Setup the file transport to log to disk..
         var fileTransport = new (winston.transports.File)({
-            filename: path.join(__dirname, '..', 'log', 'arcanus.log'),
+            filename: path.join(__dirname, '..', 'logs', 'arcanus.log'),
             level: debugLevel,
             timestamp: true
         });
