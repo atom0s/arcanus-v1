@@ -113,7 +113,14 @@ module.exports = function ConfigurationModule(arcanus) {
         //      Configurations loaded from the /config/ folder are considered high-level configuration files.
         //      These extend the base config object rather then load into a plugin specific configuration block.
         //
-        var files = fs.readdirSync(path.join(__dirname, '..', 'config/'));
+        var files = null;
+        try {
+            files = fs.readdirSync(path.join(__dirname, '..', 'config/'));
+        } catch (e) {
+            arcanus.log.warn('Configuration: Failed to read /config/ folder. Using default configurations.');
+            return;
+        }
+
         files.forEach(function (f) {
             // Skip folders..
             if (fs.statSync(path.join(__dirname, '..', 'config/', f)).isDirectory())
