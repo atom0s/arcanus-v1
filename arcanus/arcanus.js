@@ -406,7 +406,7 @@ function Arcanus() {
         var normalize = function (port) {
             var p = parseInt(port, 10);
             if (isNaN(p))
-                return p;
+                return port;
             return p >= 0 ? p : false;
         };
 
