@@ -68,6 +68,11 @@ html, body {
     .brand {
         width: 200px;
         height: 200px;
+        -webkit-animation: fadein 2.5s; /* Safari and Chrome */
+        -moz-animation: fadein 2.5s; /* Firefox */
+        -ms-animation: fadein 2.5s; /* Internet Explorer */
+        -o-animation: fadein 2.5s; /* Opera */
+        animation: fadein 2.5s;
     }
 
     .error {
@@ -109,13 +114,50 @@ html, body {
 }
 
 /**
- * Bootstrap fade override.
+ * Fade-In Frames
  */
-.fade {
-    opacity: 0;
-    -webkit-transition: opacity 1.0s linear;
-    -moz-transition: opacity 1.0s linear;
-    -ms-transition: opacity 1.0s linear;
-    -o-transition: opacity 1.0s linear;
-    transition: opacity 1.0s linear;
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-ms-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
