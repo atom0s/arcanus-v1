@@ -155,7 +155,7 @@ module.exports = function ConfigurationModule(arcanus) {
                 // Load and merge the configuration..
                 var cfg = require(path.join(__dirname, '..', 'config/', f));
                 self.config = arcanus.utils.deepMerge(self.config, cfg);
-                arcanus.log.debug('Configuration: Loaded extended configurations from: %s', f);
+                arcanus.log.info('Configuration: Loaded extended configurations from: %s', f);
             } catch (e) {
                 arcanus.log.error('Configuration: Failed to load a configuration file: %s', f);
             }
