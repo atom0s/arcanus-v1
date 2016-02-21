@@ -157,7 +157,7 @@ MenuUtils.isValidMenuParent = function (menu) {
 
         // Parents should have children..
         function (m) {
-            return m.children && m.children instanceof Array && m.children.length > 0;
+            return m.children && m.children instanceof Array;
         }
     ];
 
