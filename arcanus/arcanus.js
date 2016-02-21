@@ -235,6 +235,7 @@ function Arcanus() {
      * @param {function} callback                   The callback to continue the initialization chain.
      */
     this.initializePassport = function (callback) {
+        arcanus.passport = passport;
         arcanus.app.use(flash());
         arcanus.app.use(passport.initialize());
         arcanus.app.use(passport.session());
