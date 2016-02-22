@@ -69,13 +69,6 @@ module.exports = function PluginServiceModule(arcanus) {
     var PLUGIN_PUBLIC_DIRECTORY = 'public';
 
     /**
-     * The array of currently loaded plugins.
-     *
-     * @type {Array}
-     */
-    var LOADED_PLUGINS = [];
-
-    /**
      * Enumeration of dependency types that can be installed via a plugin.
      * @type {Object}
      */
@@ -110,6 +103,7 @@ module.exports = function PluginServiceModule(arcanus) {
      * @param {function} done                       The callback to invoke when finished.
      */
     PluginService.prototype.Initialize = function (done) {
+        this.LOADED_PLUGINS = {};
         done(null, true);
     };
 
@@ -129,15 +123,14 @@ module.exports = function PluginServiceModule(arcanus) {
      */
     PluginService.prototype.getFavIcon = function (done) {
         var icon = './public/img/favicon.ico';
+        var self = this;
 
-        // Loop the plugins in reverse and find the overriding plugin (if any)..
-        for (var x = LOADED_PLUGINS.length; x > 0; --x) {
-            var plugin = LOADED_PLUGINS[x];
+        Object.keys(self.LOADED_PLUGINS).forEach(function (k) {
+            var plugin = self.LOADED_PLUGINS[k];
             if (plugin.json.favicon && arcanus.utils.isNonEmptyString(plugin.json.favicon)) {
                 icon = path.join(PLUGIN_DIRECTORY, plugin.uid, PLUGIN_PUBLIC_DIRECTORY, plugin.json.favicon);
-                break;
             }
-        }
+        });
 
         // Return the icon to the callback..
         done(null, icon);
@@ -339,7 +332,7 @@ module.exports = function PluginServiceModule(arcanus) {
 
         // Validate the plugin is unique..
         tasks.push(function (callback) {
-            return arcanus.utils.isObject(LOADED_PLUGINS[pluginJson.uid])
+            return arcanus.utils.isObject(self.LOADED_PLUGINS[pluginJson.uid])
                 ? callback(new Error(`Cannot load two plugins with the same uid. '${pluginJson.uid}'`))
                 : callback();
         });
@@ -409,7 +402,7 @@ module.exports = function PluginServiceModule(arcanus) {
             }
 
             // Add this plugin to the loaded array..
-            LOADED_PLUGINS[pluginJson.uid] = {
+            self.LOADED_PLUGINS[pluginJson.uid] = {
                 uid: pluginJson.uid,
                 json: pluginJson,
                 entry: entry
@@ -421,7 +414,7 @@ module.exports = function PluginServiceModule(arcanus) {
         // Invoke the plugin entry point scripts Initialize function..
         tasks.push(function (callback) {
             // Obtain the loaded plugin instance..
-            var plugin = LOADED_PLUGINS[pluginJson.uid];
+            var plugin = self.LOADED_PLUGINS[pluginJson.uid];
             if (!plugin)
                 return callback(new Error('Failed to obtain loaded plugin for entry point initialization.'));
 
@@ -468,7 +461,7 @@ module.exports = function PluginServiceModule(arcanus) {
             if (err) {
                 // If a plugin was partially loaded, delete it..
                 if (err && pluginJson && pluginJson.uid) {
-                    delete LOADED_PLUGINS[pluginJson.uid];
+                    delete self.LOADED_PLUGINS[pluginJson.uid];
                     delete arcanus.config.plugins.__loadedPluginConfigurations[pluginJson.uid];
                 }
 
@@ -496,11 +489,11 @@ module.exports = function PluginServiceModule(arcanus) {
      */
     PluginService.prototype.unloadPlugin = function (uid, done) {
         // Validate the incoming uid..
-        if (!arcanus.utils.isNonEmptyString(uid) || !LOADED_PLUGINS[uid])
+        if (!arcanus.utils.isNonEmptyString(uid) || !this.LOADED_PLUGINS[uid])
             return done(new Error('Invalid plugin uid, could not find plugin.'), false);
 
         // Delete the loaded plugin..
-        delete LOADED_PLUGINS[uid];
+        delete this.LOADED_PLUGINS[uid];
         delete arcanus.config.plugins.__loadedPluginConfigurations[uid];
 
         // Remove the plugins view path..

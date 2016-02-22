@@ -409,6 +409,21 @@ function Arcanus() {
     };
 
     /**
+     * Initializes the favorite icon handler via the plugin system.
+     *
+     * @param {function} callback                   The callback to continue the initialization chain.
+     */
+    this.initializeFavoriteIcon = function (callback) {
+        arcanus.services.get('pluginservice').getFavIcon(function (err, result) {
+            if (err)
+                return callback(new Error('Could not retrieve a valid favicon!'));
+
+            arcanus.app.use(favicon(result));
+            return callback();
+        });
+    };
+
+    /**
      * Initializes the Http server to listen for client requests.
      *
      * @param {function} callback                   The callback to continue the initialization chain.
@@ -463,6 +478,7 @@ function Arcanus() {
             this.initializeResponseModel,
             this.initializePlugins,
             this.initializeBaseRoutes,
+            this.initializeFavoriteIcon,
             this.initializeServer
         ];
 
