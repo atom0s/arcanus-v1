@@ -477,8 +477,8 @@ function Arcanus() {
             this.initializePassport,
             this.initializeResponseModel,
             this.initializePlugins,
-            this.initializeBaseRoutes,
             this.initializeFavoriteIcon,
+            this.initializeBaseRoutes,
             this.initializeServer
         ];
 
