@@ -36,7 +36,9 @@ var cookieParser = require('cookie-parser');
 var express = require('express');
 var favicon = require('serve-favicon');
 var flash = require('connect-flash');
+var helmet = require('helmet');
 var http = require('http');
+var https = require('https');
 var minifyHtml = require('express-minify-html');
 var morgan = require('morgan');
 var passport = require('passport');
@@ -162,10 +164,8 @@ function Arcanus() {
     this.initializeExpress = function (callback) {
         // Initialize the express application instance..
         arcanus.app = express();
-
-        // Override the 'x-powered-by' header..
-        arcanus.app.set('x-powered-by', 'arcanus');
-
+        arcanus.app.use(helmet());
+        
         // Initialize the request logger..
         arcanus.app.use(morgan('combined', { 'stream': arcanus.log.stream }));
 
@@ -193,6 +193,9 @@ function Arcanus() {
         arcanus.app.use('/public', express.static(path.join(__dirname, 'public')));
         arcanus.app.use('/public', express.static(path.join(__dirname, 'bower_components')));
 
+        // Override the 'x-powered-by' header..
+        arcanus.app.set('x-powered-by', false);
+
         /**
          * Overrides the Express.js res.render function to handle plugin based views.
          *
@@ -205,6 +208,9 @@ function Arcanus() {
          * @param {function} next                   The callback function to continue the request chain.
          */
         arcanus.app.use(function (req, res, next) {
+            // Set custom headers..
+            res.setHeader('X-Powered-By', 'arcanus framework by atom0s');
+
             // Override the res.render function..
             var render = res.render;
             res.render = function (view, options, cb) {
@@ -445,8 +451,13 @@ function Arcanus() {
         // Normalize the port to use with arcanus..
         arcanus.app.set('port', normalize(arcanus.config.server.port));
 
-        // Create the Http server instance..
-        arcanus.server = http.createServer(arcanus.app);
+        // Create the server instance..
+        if (arcanus.config.server.https === true) {
+            arcanus.server = https.createServer(arcanus.config.server.certopts, arcanus.app);
+        } else {
+            arcanus.server = http.createServer(arcanus.app);
+        }
+
         arcanus.server.on('error', function (e) {
             switch (e.code) {
                 case 'EACCES':
