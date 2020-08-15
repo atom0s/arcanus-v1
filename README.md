@@ -3,6 +3,13 @@ arcanus
 
 A Node.js website framework that is extensible through plugins.
 
+Donations
+=======
+
+Donations can be made through Paypal:
+
+[Donate via Paypal](https://paypal.me/atom0s)
+
 Thanks To
 =======
 
