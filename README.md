@@ -10,6 +10,11 @@ Donations can be made through Paypal:
 
 [Donate via Paypal](https://paypal.me/atom0s)
 
+Warning
+=======
+
+_Please understand; this code is super old and from when Node.js first kicked off. It is important that you do not use this code as-is and ensure that you upgrade all libs/deps used to ensure proper security! Lots of old vulnerabilities have surfaced within dependencies that this project used throughout the years, this is not for production use as-is any longer!_
+
 Thanks To
 =======
 
