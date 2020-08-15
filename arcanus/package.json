@@ -27,7 +27,7 @@
     "helmet": "^3.11.0",
     "http": "0.0.0",
     "less-middleware": "2.2.x",
-    "lodash": "^4.1.0",
+    "lodash": "^4.17.19",
     "morgan": "^1.6.1",
     "mysql": "^2.10.2",
     "node-cache": "^4.1.0",
